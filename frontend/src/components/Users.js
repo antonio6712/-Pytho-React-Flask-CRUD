@@ -7,12 +7,9 @@ export const Users = () =>{
     const [ name, setName] = useState('') //definimos un estado con una clabe llamada name y leasignamos un capo basio
     const [ email, setEmail] = useState('') //definimos un estado con una clabe llamada name y leasignamos un capo basio
     const [ password, setPassword] = useState('') //definimos un estado con una clabe llamada name y leasignamos un capo basixo
-    
-    const [ users, setUsers] = useState([]) 
-    
     const [ editing, setEditing] = useState(false) 
-    
     const [ id, setId] = useState('') 
+    const [ users, setUsers] = useState([]) 
     
     
 
@@ -31,8 +28,9 @@ export const Users = () =>{
         const data = await res.json();
         console.log(data);
 
-        setEditing(true);
+        setEditing(true);// el dato pasa a estar en true
         setId(id);
+        console.log(id);// le pasamos el id que consultamos
 
         setName(data.name)
         setEmail(data.email)
@@ -52,9 +50,9 @@ export const Users = () =>{
     }
 
     const handleSubmit = async (e) =>{
+        e.preventDefault();// esto cancela el evento por defecto que no se recargue la pagina
+        // fetch('')
         if (!editing){
-            e.preventDefault();// esto cancela el evento por defecto que no se recargue la pagina
-            // fetch('')
             const res = await fetch(`${API}/users`,{
                 method: 'POST',
                 headers:{
@@ -71,19 +69,24 @@ export const Users = () =>{
         }else{
             const res = await fetch(`${API}/users/${id}`, {
                 method: 'PUT',
-                headers:{
-                    'Content-Type':'application/json'
+                headers: {
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     name,
                     email,
                     password
                 })
-            })
+
+            })// este id se obtiene desde el estado de la aplicacion
             const data = await res.json();
-            console.log(data);
+            console.log(data)
+            setEditing(false);
+            setId('');
         }
+        //mando allamar a los ususarios 
         await getUsers();
+        // limpio los campos
         setName('');
         setEmail('');
         setPassword('');
@@ -121,7 +124,7 @@ export const Users = () =>{
                         /> {/*lo que el usuario tipee por ejemplo una "a nostros le pasamos una A"*/}
                     </div>
                     <button className="btn btn-primary btn-block">
-                        CREATE
+                        {editing ? 'UPDATE':'CREATE'} {/* esto nos dice si el campo editing es verdadero cambiara a update pero si es falso se mostrara crate */}
                     </button>
                 </form>
 
